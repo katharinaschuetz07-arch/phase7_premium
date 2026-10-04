@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#070a12">
-<title>Phase 7 - Version 1.1.5</title>
+<title>Phase 7 - Version 1.1.6</title>
 <style>
   :root {
     --bg-dark: #070a12;
@@ -220,7 +220,7 @@
   }
   
   .note {
-    font-size: 8pt;
+    font-size: 9pt;
     color: var(--text-muted);
     padding: 12px 4px;
     line-height: 1.4;
@@ -291,7 +291,7 @@
 
 <header>
   <h1>Phase7-Premium</h1>
-  <span class="version">Version 1.1.5</span>
+  <span class="version">Version 1.1.6</span>
   <div class="fileline">Datei: <b id="filename">Neue Datei</b>
     <span id="status" class="status">• bereit</span>
   </div>
@@ -315,6 +315,7 @@
     <div class="previewtools">
       <button class="light" id="refreshBtn">↻ Aktualisieren</button>
       <button class="light" id="newBtn">＋ Neue Datei</button>
+      <button class="light" id="welcomeBtn">↺ Starttext</button>
     </div>
     <iframe id="preview" title="HTML-Vorschau"></iframe>
   </section>
@@ -322,7 +323,7 @@
   <!-- 2. CODE EDITOR (DARUNTER) -->
   <section class="panel" id="editorSection">
     <div class="panelhead">
-      <span>✏️ HTML bearbeiten</span>
+      <span>✏️️ HTML bearbeiten</span>
       <div class="pane-actions">
         <span id="lineCount">1 Zeile</span>
         <span>•</span>
@@ -396,7 +397,7 @@ const starter = `<!doctype html>
 <body>
 <div class="card">
   <h1>Hallo Katharina! 👋</h1>
-  <p>Willkommen in deinem persönlichen HTML-Editor <span class="badge">Phase 7 (v1.1.5)</span>.</p>
+  <p>Willkommen in deinem persönlichen HTML-Editor <span class="badge">Phase 7 (v1.1.6)</span>.</p>
   <p>Hier kannst du deinen HTML-Code eingeben, ausprobieren und direkt live in dieser Vorschau sehen.</p>
 </div>
 </body>
@@ -411,6 +412,7 @@ const count = document.getElementById("count");
 const lineNumbers = document.getElementById("lineNumbers");
 const lineCountEl = document.getElementById("lineCount");
 
+// Beim Starten & Neuladen IMMER den Willkommenstext laden
 editor.value = starter;
 
 function updateLineNumbers() {
@@ -500,13 +502,21 @@ document.getElementById("saveAsBtn").onclick = ()=>{
   downloadFile(clean);
 };
 
-// Neue Datei: Feld & Vorschau komplett leeren!
+// Neue Datei: Feld leeren
 document.getElementById("newBtn").onclick = ()=>{
   if(!confirm("Neue Datei beginnen? Ungespeicherte Änderungen gehen dabei verloren.")) return;
   editor.value = "";
   filename.textContent = "Neue Datei";
   render(false);
   setStatus("neue leere Datei");
+};
+
+// Willkommenstext wiederherstellen
+document.getElementById("welcomeBtn").onclick = ()=>{
+  editor.value = starter;
+  filename.textContent = "Neue Datei";
+  render(false);
+  setStatus("Starttext geladen");
 };
 
 function showModal(title, html){
@@ -525,7 +535,7 @@ document.getElementById("modal").onclick = e=>{
 document.getElementById("impressumBtn").onclick = ()=>{
   showModal("Impressum", `
     <p><strong>Angaben gemäß § 5 TDDDG / TMG</strong></p>
-    <p><strong>Katharinas HTML-Editor (Phase 7 - Version 1.1.5)</strong></p>
+    <p><strong>Katharinas HTML-Editor (Phase 7 - Version 1.1.6)</strong></p>
     <p>Entwickelt von:<br>
     <strong>Katharina Schütz</strong><br>
     Potsdam, Germany</p>
@@ -555,4 +565,3 @@ render(false);
 </script>
 </body>
 </html>
-
