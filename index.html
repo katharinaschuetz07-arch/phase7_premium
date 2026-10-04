@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070a12">
+<title>Phase 7 - Version 1.1.5</title>
+<style>
+  :root {
+    --bg-dark: #070a12;
+    --card-bg: #0f172a;
+    --card-border: #1e293b;
+    --accent: #38bdf8;
+    --accent-hover: #0284c7;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --btn-secondary-bg: #1e293b;
+    --btn-secondary-text: #e2e8f0;
+    --btn-light-bg: #1a2c42;
+    --btn-light-text: #38bdf8;
+  }
+  
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  
+  body { min-height: 100vh; }
+  
+  .app {
+    width: min(100%, 1020px);
+    margin: auto;
+    padding: 12px 12px 22px;
+  }
+  
+  header {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 18px 18px 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 38px;
+    margin: 0;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+  
+  .version {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 4px;
+    display: block;
+  }
+  
+  .fileline {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--text-main);
+    border-top: 1px solid var(--card-border);
+    padding-top: 8px;
+  }
+  
+  .fileline b { font-weight: 650; color: var(--accent); }
+  .status { color: #4ade80; margin-left: 6px; }
+  
+  .toolbar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  button, .filebutton {
+    min-height: 46px;
+    border: 1px solid transparent;
+    border-radius: 13px;
+    padding: 10px 8px;
+    font-size: 14px;
+    font-weight: 650;
+    cursor: pointer;
+    text-align: center;
+    background: var(--accent);
+    color: #040814;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  
+  button:hover, .filebutton:hover {
+    background: var(--accent-hover);
+    color: #ffffff;
+  }
+  
+  button.secondary {
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: 1px solid var(--card-border);
+  }
+  
+  button.light {
+    background: var(--btn-light-bg);
+    color: var(--btn-light-text);
+    border: 1px solid #254b73;
+  }
+  
+  input[type=file] { display: none; }
+  
+  .workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .panel {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    overflow: hidden;
+  }
+  
+  .panelhead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: #090d16;
+    border-bottom: 1px solid var(--card-border);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .pane-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .jump-btn {
+    min-height: 28px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: var(--btn-light-bg);
+    color: var(--btn-light-text);
+    border: 1px solid #254b73;
+  }
+  
+  .editor-container {
+    display: flex;
+    background: var(--bg-dark);
+    position: relative;
+  }
+
+  .line-numbers {
+    width: 45px;
+    padding: 14px 6px 14px 0;
+    font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--text-muted);
+    background: #05080f;
+    border-right: 1px solid var(--card-border);
+    text-align: right;
+    user-select: none;
+    overflow: hidden;
+    opacity: 0.6;
+  }
+
+  textarea {
+    flex: 1;
+    display: block;
+    min-height: 380px;
+    border: 0;
+    outline: 0;
+    resize: vertical;
+    padding: 14px;
+    font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: #e2e8f0;
+    background: transparent;
+    tab-size: 2;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  
+  iframe {
+    display: block;
+    width: 100%;
+    height: 480px;
+    border: 0;
+    background: #ffffff;
+  }
+  
+  .previewtools {
+    display: flex;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
+  }
+  
+  .previewtools button {
+    min-height: 36px;
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+  
+  .note {
+    font-size: 9pt;
+    color: var(--text-muted);
+    padding: 12px 4px;
+    line-height: 1.4;
+  }
+  
+  footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--card-border);
+  }
+  
+  footer button {
+    background: none;
+    color: var(--text-muted);
+    padding: 4px 0;
+    min-height: auto;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  
+  footer button:hover { color: var(--accent); }
+  
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+  }
+  
+  .modal.show { display: flex; }
+  
+  .dialog {
+    width: min(100%, 540px);
+    max-height: 85vh;
+    overflow: auto;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  }
+  
+  .dialog h2 { margin: 0 0 12px; font-size: 20px; color: var(--accent); }
+  .dialog p { font-size: 14px; line-height: 1.6; margin: 10px 0; color: #cbd5e1; }
+  .dialog ul { margin: 8px 0; padding-left: 20px; color: #cbd5e1; font-size: 14px; line-height: 1.6; }
+  .close { margin-top: 18px; width: 100%; }
+  
+  @media(min-width: 700px) {
+    .workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    textarea { min-height: 580px; }
+    iframe { height: 580px; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="top">
+
+<header>
+  <h1>Phase 7</h1>
+  <span class="version">Version 1.1.5</span>
+  <div class="fileline">Datei: <b id="filename">Neue Datei</b>
+    <span id="status" class="status">• bereit</span>
+  </div>
+</header>
+
+<div class="toolbar">
+  <label class="filebutton" for="fileInput">📂 Öffnen</label>
+  <input id="fileInput" type="file" accept=".html,.htm,text/html">
+
+  <button id="saveAsBtn" class="secondary">💾 Speichern unter</button>
+  <button id="previewBtn" class="light">👁 Vorschau aktualisieren</button>
+</div>
+
+<div class="workspace">
+  <!-- 1. VORSCHAU (OBEN) -->
+  <section class="panel" id="previewSection">
+    <div class="panelhead">
+      <span>👁 Vorschau</span>
+      <button class="jump-btn" onclick="scrollToCode()">👇 Zum Code</button>
+    </div>
+    <div class="previewtools">
+      <button class="light" id="refreshBtn">↻ Aktualisieren</button>
+      <button class="light" id="newBtn">＋ Neue Datei</button>
+    </div>
+    <iframe id="preview" title="HTML-Vorschau"></iframe>
+  </section>
+
+  <!-- 2. CODE EDITOR (DARUNTER) -->
+  <section class="panel" id="editorSection">
+    <div class="panelhead">
+      <span>✏️ HTML bearbeiten</span>
+      <div class="pane-actions">
+        <span id="lineCount">1 Zeile</span>
+        <span>•</span>
+        <span id="count">0 Zeichen</span>
+        <button class="jump-btn" onclick="scrollToPreview()">👆 Zur Vorschau</button>
+      </div>
+    </div>
+    <div class="editor-container">
+      <div class="line-numbers" id="lineNumbers">1</div>
+      <textarea id="editor" spellcheck="false" aria-label="HTML-Code"></textarea>
+    </div>
+  </section>
+</div>
+
+<div class="note">
+  <b>Tipp & Hinweis zur Ansicht:</b> Auf dem Smartphone (iPhone / Android) befindet sich die Vorschau im oberen Bereich und der HTML-Code darunter. Auf Tablets und PCs werden beide Bereiche nebeneinander angezeigt. Beim Tippen auf „Speichern unter“ öffnet sich der Dateidialog deines Geräts (z. B. „Dateien“, iCloud Drive oder Google Drive).
+</div>
+
+<footer>
+  <button id="impressumBtn">Impressum</button>
+  <span>© 2026</span>
+  <button id="privacyBtn">Datenschutz</button>
+</footer>
+
+</div>
+
+<div class="modal" id="modal">
+  <div class="dialog">
+    <h2 id="modalTitle"></h2>
+    <div id="modalText"></div>
+    <button class="close" id="closeModal">Schließen</button>
+  </div>
+</div>
+
+<script>
+const starter = `<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 7 - Mein HTML-Editor</title>
+<style>
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #f8fafc;
+    color: #0f172a;
+    padding: 24px;
+    margin: 0;
+  }
+  .card {
+    max-width: 520px;
+    margin: 0 auto;
+    background: white;
+    padding: 24px;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+  }
+  h1 { color: #0284c7; margin-top: 0; font-size: 1.5rem; }
+  p { line-height: 1.6; color: #334155; }
+  .badge {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Hallo Katharina! 👋</h1>
+  <p>Willkommen in deinem persönlichen HTML-Editor <span class="badge">Phase 7 (v1.1.5)</span>.</p>
+  <p>Hier kannst du deinen HTML-Code eingeben, ausprobieren und direkt live in dieser Vorschau sehen.</p>
+</div>
+</body>
+</html>`;
+
+const editor = document.getElementById("editor");
+const preview = document.getElementById("preview");
+const fileInput = document.getElementById("fileInput");
+const filename = document.getElementById("filename");
+const statusEl = document.getElementById("status");
+const count = document.getElementById("count");
+const lineNumbers = document.getElementById("lineNumbers");
+const lineCountEl = document.getElementById("lineCount");
+
+editor.value = starter;
+
+function updateLineNumbers() {
+  const lines = editor.value.split('\n');
+  const lineCount = lines.length;
+  
+  let numArray = [];
+  for (let i = 1; i <= lineCount; i++) {
+    numArray.push(i);
+  }
+  lineNumbers.innerHTML = numArray.join('<br>');
+  
+  count.textContent = editor.value.length.toLocaleString("de-DE") + " Zeichen";
+  lineCountEl.textContent = lineCount.toLocaleString("de-DE") + (lineCount === 1 ? " Zeile" : " Zeilen");
+}
+
+editor.addEventListener("scroll", () => {
+  lineNumbers.scrollTop = editor.scrollTop;
+});
+
+function setStatus(text){
+  statusEl.textContent = "• " + text;
+}
+
+function scrollToPreview() {
+  document.getElementById("previewSection").scrollIntoView({ behavior: 'smooth' });
+}
+
+function scrollToCode() {
+  document.getElementById("editorSection").scrollIntoView({ behavior: 'smooth' });
+}
+
+function render(autoScroll = false){
+  const htmlContent = editor.value;
+  preview.srcdoc = htmlContent;
+  updateLineNumbers();
+  setStatus("Vorschau aktualisiert");
+  if(autoScroll) {
+    scrollToPreview();
+  }
+}
+
+editor.addEventListener("input", ()=>{
+  updateLineNumbers();
+  render(false);
+  setStatus("ungespeicherte Änderungen");
+});
+
+document.getElementById("previewBtn").onclick = () => render(true);
+document.getElementById("refreshBtn").onclick = () => render(false);
+
+fileInput.addEventListener("change", async e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  try {
+    const text = await file.text();
+    editor.value = text;
+    filename.textContent = file.name;
+    render(false);
+    setStatus("Datei geöffnet");
+  } catch(err) {
+    alert("Fehler beim Öffnen der Datei.");
+  }
+});
+
+function downloadFile(name){
+  const blob = new Blob([editor.value], {type:"text/html;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name || "meine-app.html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  filename.textContent = name || "meine-app.html";
+  setStatus("Datei gespeichert");
+}
+
+document.getElementById("saveAsBtn").onclick = ()=>{
+  const suggested = (filename.textContent && filename.textContent !== "Neue Datei")
+    ? filename.textContent : "meine-app.html";
+  const name = prompt("Dateiname wählen:", suggested);
+  if(name === null) return;
+  let clean = name.trim() || "meine-app.html";
+  if(!/\.(html|htm)$/i.test(clean)) clean += ".html";
+  downloadFile(clean);
+};
+
+// Neue Datei: Feld & Vorschau komplett leeren!
+document.getElementById("newBtn").onclick = ()=>{
+  if(!confirm("Neue Datei beginnen? Ungespeicherte Änderungen gehen dabei verloren.")) return;
+  editor.value = "";
+  filename.textContent = "Neue Datei";
+  render(false);
+  setStatus("neue leere Datei");
+};
+
+function showModal(title, html){
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalText").innerHTML = html;
+  document.getElementById("modal").classList.add("show");
+}
+
+document.getElementById("closeModal").onclick =
+  ()=>document.getElementById("modal").classList.remove("show");
+
+document.getElementById("modal").onclick = e=>{
+  if(e.target.id === "modal") e.currentTarget.classList.remove("show");
+};
+
+document.getElementById("impressumBtn").onclick = ()=>{
+  showModal("Impressum", `
+    <p><strong>Angaben gemäß § 5 TDDDG / TMG</strong></p>
+    <p><strong>Katharinas HTML-Editor (Phase 7 - Version 1.1.5)</strong></p>
+    <p>Entwickelt von:<br>
+    <strong>Katharina Schütz</strong><br>
+    Potsdam, Germany</p>
+    
+    <p><strong>Haftungs- & Urheberrechtshinweis</strong></p>
+    <p>Dies ist ein persönlicher Prototyp. Die Anwendung ist urheberrechtlich geschützt und darf ohne ausdrückliche schriftliche Einwilligung von Katharina Schütz nicht weitergegeben, vervielfältigt oder kommerziell genutzt werden.</p>
+    
+    <p><strong>Nutzung & Feedback</strong></p>
+    <p>Die Anwendung darf sehr gerne als persönliche App auf Smartphones (iOS / Android) sowie Tablets gespeichert, ausprobiert und genutzt werden. Konstruktives Feedback ist jederzeit herzlich willkommen!</p>
+  `);
+};
+
+document.getElementById("privacyBtn").onclick = ()=>{
+  showModal("Datenschutz", `
+    <p><strong>Datenschutzerklärung</strong></p>
+    <p>Diese Anwendung verarbeitet deine Daten mit höchstmöglichem Schutz und absoluter Sparsamkeit:</p>
+    <ul>
+      <li><strong>Keine Cookies:</strong> Es werden keinerlei Cookies oder ähnliche Identifikatoren auf deinem Endgerät gespeichert.</li>
+      <li><strong>Kein Tracking & keine Analyse:</strong> Es kommen keinerlei Analyse-Dienste, Tracking-Pixel oder Nutzerstatistiken zum Einsatz.</li>
+      <li><strong>100 % Lokale Verarbeitung:</strong> Dein HTML-Code verbleibt ausschließlich lokal in deinem Browser. Es findet keine Übertragung an externe Server statt.</li>
+      <li><strong>Dateisystem-Zugriff:</strong> Beim Verwenden der Funktion „Speichern unter“ nutzt das Gerät seinen eigenen Datei-Dialog. Ein dort ausgewählter Ordner oder Cloud-Speicher (wie iCloud Drive oder Google Drive) unterliegt den Datenschutzbestimmungen des jeweiligen Anbieters.</li>
+    </ul>
+  `);
+};
+
+render(false);
+</script>
+</body>
+</html>
+
