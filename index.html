@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#070a12">
-<title>Phase 7 - Version 1.1.6</title>
+<title>Phase 7 Premium - Version 2.9.7</title>
 <style>
   :root {
     --bg-dark: #070a12;
@@ -50,15 +50,22 @@
   }
   
   h1 {
-    font-size: 30px;
+    font-size: 36px;
     margin: 0;
     font-weight: 800;
     color: var(--accent);
     letter-spacing: 0.5px;
   }
   
+  .subtitle {
+    font-size: 15px;
+    color: var(--text-main);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  
   .version {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-muted);
     font-weight: 500;
     margin-top: 4px;
@@ -148,7 +155,7 @@
   
   .pane-actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
   }
   
@@ -219,11 +226,24 @@
     padding: 6px 12px;
   }
   
-  .note {
-    font-size: 8pt;
-    color: var(--text-muted);
+  .note-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     padding: 12px 4px;
+  }
+
+  .note {
+    font-size: 9pt;
+    color: var(--text-muted);
     line-height: 1.4;
+  }
+  
+  .bottom-jump-btn {
+    align-self: flex-start;
+    min-height: 32px;
+    font-size: 12px;
+    padding: 4px 12px;
   }
   
   footer {
@@ -290,8 +310,9 @@
 <div class="app" id="top">
 
 <header>
-  <h1>Phase7-Premium</h1>
-  <span class="version">Version 1.1.6</span>
+  <h1>Phase 7 Premium</h1>
+  <div class="subtitle">Mein HTML-Editor</div>
+  <span class="version">Version 2.9.7</span>
   <div class="fileline">Datei: <b id="filename">Neue Datei</b>
     <span id="status" class="status">• bereit</span>
   </div>
@@ -323,11 +344,12 @@
   <!-- 2. CODE EDITOR (DARUNTER) -->
   <section class="panel" id="editorSection">
     <div class="panelhead">
-      <span>✏️️ HTML bearbeiten</span>
+      <span>✏️ HTML bearbeiten</span>
       <div class="pane-actions">
         <span id="lineCount">1 Zeile</span>
         <span>•</span>
         <span id="count">0 Zeichen</span>
+        <button class="jump-btn" onclick="scrollToCodeTop()">⬆ Zeile 1</button>
         <button class="jump-btn" onclick="scrollToPreview()">👆 Zur Vorschau</button>
       </div>
     </div>
@@ -338,8 +360,11 @@
   </section>
 </div>
 
-<div class="note">
-  <b>Tipp & Hinweis zur Ansicht:</b> Auf dem Smartphone (iPhone / Android) befindet sich die Vorschau im oberen Bereich und der HTML-Code darunter. Auf Tablets und PCs werden beide Bereiche nebeneinander angezeigt. Beim Tippen auf „Speichern unter“ öffnet sich der Dateidialog deines Geräts (z. B. „Dateien“, iCloud Drive oder Google Drive).
+<div class="note-box">
+  <div class="note">
+    <b>Tipp & Hinweis zur Ansicht:</b> Auf dem Smartphone (iPhone / Android) befindet sich die Vorschau im oberen Bereich und der HTML-Code darunter. Auf Tablets und PCs werden beide Bereiche nebeneinander angezeigt. Beim Tippen auf „Speichern unter“ öffnet sich der Dateidialog deines Geräts (z. B. „Dateien“, iCloud Drive oder Google Drive).
+  </div>
+  <button class="jump-btn bottom-jump-btn" onclick="scrollToCodeTop()">⬆ Zum Quellcode-Anfang (Zeile 1)</button>
 </div>
 
 <footer>
@@ -364,7 +389,7 @@ const starter = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Phase 7 - Mein HTML-Editor</title>
+<title>Phase 7 Premium - Mein HTML-Editor</title>
 <style>
   body {
     font-family: system-ui, -apple-system, sans-serif;
@@ -397,7 +422,7 @@ const starter = `<!doctype html>
 <body>
 <div class="card">
   <h1>Hallo Katharina! 👋</h1>
-  <p>Willkommen in deinem persönlichen HTML-Editor <span class="badge">Phase 7 (v1.1.6)</span>.</p>
+  <p>Willkommen in deinem persönlichen HTML-Editor <span class="badge">Phase 7 Premium (v2.9.7)</span>.</p>
   <p>Hier kannst du deinen HTML-Code eingeben, ausprobieren und direkt live in dieser Vorschau sehen.</p>
 </div>
 </body>
@@ -443,6 +468,12 @@ function scrollToPreview() {
 
 function scrollToCode() {
   document.getElementById("editorSection").scrollIntoView({ behavior: 'smooth' });
+}
+
+// Springt direkt ganz nach oben zu Zeile 1 im Editor
+function scrollToCodeTop() {
+  document.getElementById("editorSection").scrollIntoView({ behavior: 'smooth' });
+  editor.scrollTop = 0;
 }
 
 function render(autoScroll = false){
@@ -535,7 +566,7 @@ document.getElementById("modal").onclick = e=>{
 document.getElementById("impressumBtn").onclick = ()=>{
   showModal("Impressum", `
     <p><strong>Angaben gemäß § 5 TDDDG / TMG</strong></p>
-    <p><strong>Katharinas HTML-Editor (Phase 7 - Version 1.1.6)</strong></p>
+    <p><strong>Katharinas HTML-Editor (Phase 7 Premium - Version 2.9.7)</strong></p>
     <p>Entwickelt von:<br>
     <strong>Katharina Schütz</strong><br>
     Potsdam, Germany</p>
